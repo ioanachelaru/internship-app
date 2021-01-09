@@ -2,6 +2,7 @@ from django.contrib.auth import authenticate
 from django.contrib.auth.models import User
 from rest_framework import serializers
 from application.models import Student, Hr
+
 User._meta.get_field('email')._unique = True
 
 
@@ -24,13 +25,14 @@ class RegisterSerializer(serializers.ModelSerializer):
             validated_data['password']
         )
         Student.objects.create(
-            user=user, 
+            user=user,
             username=validated_data['username'],
             password=validated_data['password'],
-            name=validated_data['name'], 
+            name=validated_data['name'],
             email=validated_data['email'],
             cv=validated_data['cv'])
         return user
+
 
 class HR_RegisterSerializer(serializers.ModelSerializer):
     class Meta:
@@ -45,10 +47,10 @@ class HR_RegisterSerializer(serializers.ModelSerializer):
             validated_data['password']
         )
         Hr.objects.create(
-            user=user, 
+            user=user,
             username=validated_data['username'],
             password=validated_data['password'],
-            name=validated_data['name'], 
+            name=validated_data['name'],
             email=validated_data['email'])
         return user
 

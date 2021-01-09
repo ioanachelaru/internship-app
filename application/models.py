@@ -1,5 +1,8 @@
 from django.db import models
+from django_currentuser.db.models import CurrentUserField
 from knox.auth import User
+from django_currentuser.middleware import (
+    get_current_user, get_current_authenticated_user)
 
 
 class Student(models.Model):
@@ -45,6 +48,7 @@ class JobApplication(models.Model):
     announcement = models.OneToOneField(Announcement, on_delete=models.CASCADE)
     attachments = models.FileField(blank=True, null=True, default=None, upload_to='./attachments')
     date = models.DateTimeField(auto_now=True)
+    created_by = get_current_authenticated_user
     
     class Meta:
         unique_together = ('student', 'announcement',)
