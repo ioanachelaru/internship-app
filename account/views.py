@@ -1,5 +1,3 @@
-from django.shortcuts import render
-
 from django.contrib.auth.models import User
 from rest_framework import generics, permissions
 from rest_framework.response import Response
