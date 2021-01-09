@@ -33,9 +33,8 @@ class Company(models.Model):
 
 class Announcement(models.Model):
     id_ann = models.AutoField(primary_key=True)
-    # id_company = models.ForeignKey(User, related_name="user", on_delete=models.CASCADE, null=True)
+    company = models.OneToOneField(Company, unique=True, on_delete=models.CASCADE)
     job_name = models.CharField(max_length=200)
-    email = models.CharField(max_length=200, unique=True)
     job_description = models.CharField(max_length=1000)
     deadline = models.DateField()
 
