@@ -28,7 +28,6 @@ router.register('applications', JobApplicationViewSet, 'applications')
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('auth/', include('account.urls')),
     path('announcements/<int:id_ann>/', AnnouncementDetail.as_view()),
 ]
 
