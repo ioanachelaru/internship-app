@@ -4,7 +4,7 @@ from knox.auth import User
 
 class Student(models.Model):
     id = models.AutoField(primary_key=True)
-    user = models.ForeignKey(User, unique=True, on_delete=models.CASCADE)
+    user = models.OneToOneField(User, unique=True, on_delete=models.CASCADE)
     username = models.CharField(max_length=200)
     password = models.CharField(max_length=200)
     name = models.CharField(max_length=200)
@@ -15,7 +15,7 @@ class Student(models.Model):
 
 class Hr(models.Model):
     id = models.AutoField(primary_key=True)
-    user = models.ForeignKey(User, unique=True, on_delete=models.CASCADE)
+    user = models.OneToOneField(User, unique=True, on_delete=models.CASCADE)
     username = models.CharField(max_length=200)
     password = models.CharField(max_length=200)
     name = models.CharField(max_length=200)
