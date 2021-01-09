@@ -39,8 +39,12 @@ class Announcement(models.Model):
     deadline = models.DateField()
 
 
-class Job_appl(models.Model):
+class JobApplication(models.Model):
     id = models.AutoField(primary_key=True)
-    # id_student = models.ForeignKey(User, related_name="user", on_delete=models.CASCADE, null=True, default=None)
+    student = models.OneToOneField(Student, on_delete=models.CASCADE)
+    announcement = models.OneToOneField(Announcement, on_delete=models.CASCADE)
     attachments = models.FileField(blank=True, null=True, default=None, upload_to='./attachments')
     date = models.DateTimeField(auto_now=True)
+    
+    class Meta:
+        unique_together = ('student', 'announcement',)

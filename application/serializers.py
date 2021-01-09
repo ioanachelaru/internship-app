@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from application.models import Student, Company, Hr, Job_appl, Announcement
+from application.models import Student, Company, Hr, JobApplication, Announcement
 
 
 class StudentSerializer(serializers.ModelSerializer):
@@ -20,9 +20,9 @@ class HrSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
-class Job_applSerializer(serializers.ModelSerializer):
+class JobApplicationSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Job_appl
+        model = JobApplication
         exclude = ('date',)
 
 

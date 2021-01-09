@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from rest_framework import viewsets
-from application.models import Student, Company, Hr, Announcement, Job_appl
-from application.serializers import StudentSerializer, CompanySerializer, HrSerializer, Job_applSerializer, \
+from application.models import Student, Company, Hr, Announcement, JobApplication
+from application.serializers import StudentSerializer, CompanySerializer, HrSerializer, JobApplicationSerializer, \
     AnnouncementSerializer
 from rest_framework import generics
 from rest_framework.renderers import TemplateHTMLRenderer
@@ -22,9 +22,9 @@ class HrViewSet(viewsets.ModelViewSet):
     serializer_class = HrSerializer
 
 
-class Job_applViewSet(viewsets.ModelViewSet):
-    queryset = Job_appl.objects.all()
-    serializer_class = Job_applSerializer
+class JobApplicationViewSet(viewsets.ModelViewSet):
+    queryset = JobApplication.objects.all()
+    serializer_class = JobApplicationSerializer
 
 
 class AnnouncementViewSet(viewsets.ModelViewSet):
@@ -38,4 +38,15 @@ class AnnouncementDetail(generics.RetrieveAPIView):
 
     def get(self, request, *args, **kwargs):
         self.object = self.get_object()
-        return Response({'announcement': self.object}, template_name='announcement_detail.html')
+        print('annourcementDetail get', request.user)
+        return Response({'announcement': self.object, 'user': request.user}, template_name='announcement_detail.html')
+
+    def post(self, request, *args, **kwargs):
+        print('Hello World')
+        print('announcementDetail post', request.user)
+        user = serializers.HiddenField(default=serializers.CurrentUserDefault())
+        # JobApplication.objects.create(
+        #     student='',
+        #     announcement='',
+        # )
+        return
