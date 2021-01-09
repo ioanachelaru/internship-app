@@ -41,7 +41,8 @@ INSTALLED_APPS = [
     'rest_framework',
     'knox',
     'account.apps.AccountConfig',
-    'django_extensions'
+    'django_extensions',
+    'django_filters',
 ]
 
 REST_FRAMEWORK = {
@@ -49,6 +50,7 @@ REST_FRAMEWORK = {
         'knox.auth.TokenAuthentication',
     ),
     'DATETIME_FORMAT': "%m/%d/%Y %H:%M:%S",
+    'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend'],
 }
 
 MIDDLEWARE = [

@@ -6,10 +6,18 @@ from application.serializers import StudentSerializer, CompanySerializer, HrSeri
 from rest_framework import generics
 from rest_framework.renderers import TemplateHTMLRenderer
 from rest_framework.response import Response
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework import filters
 
 class StudentViewSet(viewsets.ModelViewSet):
     queryset = Student.objects.all()
     serializer_class = StudentSerializer
+    
+    filter_backends = [DjangoFilterBackend, filters.SearchFilter]
+    filterset_fields = ['name']
+    search_fields = ['name']
+    ordering_fields = ('name', 'email',)
+    ordering = ('name')
 
 
 class CompanyViewSet(viewsets.ModelViewSet):
