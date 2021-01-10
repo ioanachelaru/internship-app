@@ -11,15 +11,17 @@ class ApplicationUser(AbstractUser):
             Permission.objects.get(codename='view_company'),
             Permission.objects.get(codename='add_jobapplication'),
             Permission.objects.get(codename='view_jobapplication'),
+            Permission.objects.get(codename='delete_jobapplication'),
         ])
         self.save()
-        Student.objects.create(
-            user = self,
-            username = self.username,
-            password = self.password,
-            name = name,
-            email = self.email,
-        )
+        if not hasattr(self, 'student'):
+            Student.objects.create(
+                user = self,
+                username = self.username,
+                password = self.password,
+                name = name,
+                email = self.email,
+            )
 
     def make_hr(self, name):
         self.is_staff = True
@@ -37,13 +39,14 @@ class ApplicationUser(AbstractUser):
             Permission.objects.get(codename='change_jobapplication'),
         ])
         self.save()
-        Hr.objects.create(
-            user = self,
-            username = self.username,
-            password = self.password,
-            name = name,
-            email = self.email,
-        )
+        if not hasattr(self, 'hr'):
+            Hr.objects.create(
+                user = self,
+                username = self.username,
+                password = self.password,
+                name = name,
+                email = self.email,
+            )
 
 class Student(models.Model):
     id = models.AutoField(primary_key=True)
