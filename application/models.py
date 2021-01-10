@@ -1,15 +1,16 @@
 from django.db import models
 from django_currentuser.db.models import CurrentUserField
-from django_currentuser.middleware import (
-    get_current_user, get_current_authenticated_user)
 from django.contrib.auth.models import AbstractUser, Permission
 
 class ApplicationUser(AbstractUser):
-    def make_student(self, name, email):
+    def make_student(self, name):
         self.is_staff = True
         self.is_superuser = False
         self.user_permissions.set([
             Permission.objects.get(codename='view_announcement'),
+            Permission.objects.get(codename='view_company'),
+            Permission.objects.get(codename='add_jobapplication'),
+            Permission.objects.get(codename='view_jobapplication'),
         ])
         self.save()
         Student.objects.create(
@@ -17,10 +18,10 @@ class ApplicationUser(AbstractUser):
             username = self.username,
             password = self.password,
             name = name,
-            email = email,
+            email = self.email,
         )
 
-    def make_hr(self):
+    def make_hr(self, name):
         self.is_staff = True
         self.is_superuser = False
         self.user_permissions.set([
@@ -32,8 +33,17 @@ class ApplicationUser(AbstractUser):
             Permission.objects.get(codename='add_company'),
             Permission.objects.get(codename='change_company'),
             Permission.objects.get(codename='delete_company'),
+            Permission.objects.get(codename='view_jobapplication'),
+            Permission.objects.get(codename='change_jobapplication'),
         ])
         self.save()
+        Hr.objects.create(
+            user = self,
+            username = self.username,
+            password = self.password,
+            name = name,
+            email = self.email,
+        )
 
 class Student(models.Model):
     id = models.AutoField(primary_key=True)
@@ -43,7 +53,6 @@ class Student(models.Model):
     name = models.CharField(max_length=200)
     email = models.CharField(max_length=200, unique=True)
     cv = models.FileField(blank=True, null=True, default=None, upload_to='./cvs')
-    # user = models.ForeignKey(User, related_name="user", on_delete=models.CASCADE, null=True)
 
 
 class Hr(models.Model):
@@ -74,6 +83,9 @@ class Announcement(models.Model):
     job_description = models.CharField(max_length=1000)
     deadline = models.DateField()
 
+    def __str__(self):
+        return self.job_name + ' ' + self.job_description 
+
 
 class JobApplication(models.Model):
     id = models.AutoField(primary_key=True)
@@ -81,7 +93,6 @@ class JobApplication(models.Model):
     announcement = models.OneToOneField(Announcement, on_delete=models.CASCADE)
     attachments = models.FileField(blank=True, null=True, default=None, upload_to='./attachments')
     date = models.DateTimeField(auto_now=True)
-    created_by = get_current_authenticated_user
     
     class Meta:
         unique_together = ('student', 'announcement',)

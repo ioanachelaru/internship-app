@@ -22,13 +22,9 @@ from application.views import StudentViewSet, HrViewSet, CompanyViewSet, Announc
 router = routers.DefaultRouter()
 router.register('students', StudentViewSet, 'students')
 router.register('hrs', HrViewSet, 'hrs')
-router.register('companies', CompanyViewSet, 'companies')
-router.register('announcements', AnnouncementViewSet, 'announcements')
-router.register('applications', JobApplicationViewSet, 'applications')
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('announcements/<int:id_ann>/', AnnouncementDetail.as_view()),
 ]
 
 urlpatterns += router.urls
