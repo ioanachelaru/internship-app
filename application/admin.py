@@ -9,9 +9,22 @@ class CompanyAdmin(admin.ModelAdmin):
 
 @admin.register(JobApplication)
 class JobApplicationAdmin(admin.ModelAdmin):
-    pass
+    def get_queryset(self, request):
+        qs = super(JobApplicationAdmin, self).get_queryset(request)
+        if request.user.is_superuser:
+            return qs
+        print(qs)
+        return qs.filter(student=Student.objects.filter(username=request.user).first())
+
+    def add_view(self, request, object_id, extra_context=None):       
+        self.exclude = ('status', )
+        return super(JobApplicationAdmin, self).change_view(request, object_id, extra_context)
+
+    def delete_view(self, request, object_id, extra_context=None):       
+        self.exclude = ('status', )
+        return super(JobApplicationAdmin, self).change_view(request, object_id, extra_context)
+
     # list_display = ['attachments']
-    # exclude = ('student',)
     # readonly_fields = ('announcement',)
     # def get_queryset(self, request):
     #     print(request)
@@ -30,7 +43,7 @@ class AnnouncementAdmin(admin.ModelAdmin):
     def apply_to(self, request, queryset):
         print(request.user)
         print(queryset)
-        student=Student.objects.filter(name=request.user).first()
+        student=Student.objects.filter(username=request.user).first()
         announcement = queryset.first()
         # application = JobApplication.objects.create(
         #     student=Student.objects.filter(name=request.user).first(),

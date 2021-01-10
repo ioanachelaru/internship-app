@@ -90,12 +90,20 @@ class Announcement(models.Model):
         return self.job_name + ' ' + self.job_description 
 
 
+class JobApplicationStatus(models.IntegerChoices):
+    PENDING = 0, 'Pending'
+    DENIED = 1, 'Denied'
+    REVIEWED = 2, 'High'
+    ACCEPTED = 3, 'Accepted'
+
+
 class JobApplication(models.Model):
     id = models.AutoField(primary_key=True)
     student = models.OneToOneField(Student, on_delete=models.CASCADE)
     announcement = models.OneToOneField(Announcement, on_delete=models.CASCADE)
     attachments = models.FileField(blank=True, null=True, default=None, upload_to='./attachments')
     date = models.DateTimeField(auto_now=True)
-    
+    status = models.IntegerField(default=JobApplicationStatus.PENDING, choices=JobApplicationStatus.choices)
+
     class Meta:
         unique_together = ('student', 'announcement',)
