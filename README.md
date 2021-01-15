@@ -13,11 +13,14 @@
 (venv) > python manage.py migrate --run-syncdb
 (venv) > python manage.py createsuperuser
 -> admin, student, hr
-(venv) > python manage.py shell_plus
+(venv) > python manage.py customusers
+(venv) > python manage.py runserver
+
+### Managing users in shell
+
 >>> ApplicationUser.objects.all() // show all users
 >>> admin = ApplicationUser.objects.all()[0]
 >>> student = ApplicationUser.objects.all()[1]
 >>> student.make_student(name='student')
 >>> hr = ApplicationUser.objects.all()[2]
 >>> hr.make_hr(name='hr')
-(venv) > python manage.py runserver

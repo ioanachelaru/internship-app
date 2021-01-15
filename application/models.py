@@ -58,16 +58,6 @@ class Student(models.Model):
     cv = models.FileField(blank=True, null=True, default=None, upload_to='./cvs')
 
 
-class Hr(models.Model):
-    id = models.AutoField(primary_key=True)
-    user = models.OneToOneField(ApplicationUser, unique=True, on_delete=models.CASCADE)
-    username = models.CharField(max_length=200)
-    password = models.CharField(max_length=200)
-    name = models.CharField(max_length=200)
-    email = models.CharField(max_length=200, unique=True)
-    # company_id = models.ForeignKey(User, related_name="user", on_delete=models.CASCADE, null=True)
-
-
 class Company(models.Model):
     id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=200)
@@ -79,12 +69,22 @@ class Company(models.Model):
         return self.name
 
 
+class Hr(models.Model):
+    id = models.AutoField(primary_key=True)
+    user = models.OneToOneField(ApplicationUser, unique=True, on_delete=models.CASCADE)
+    username = models.CharField(max_length=200)
+    password = models.CharField(max_length=200)
+    name = models.CharField(max_length=200)
+    email = models.CharField(max_length=200, unique=True)
+
+
 class Announcement(models.Model):
     id_ann = models.AutoField(primary_key=True)
     company = models.OneToOneField(Company, unique=True, on_delete=models.CASCADE)
     job_name = models.CharField(max_length=200)
     job_description = models.CharField(max_length=1000)
     deadline = models.DateField()
+    hr = models.ForeignKey(Hr, related_name='announcements', on_delete=models.CASCADE)
 
     def __str__(self):
         return self.job_name + ' ' + self.job_description 
@@ -93,7 +93,7 @@ class Announcement(models.Model):
 class JobApplicationStatus(models.IntegerChoices):
     PENDING = 0, 'Pending'
     DENIED = 1, 'Denied'
-    REVIEWED = 2, 'High'
+    REVIEWED = 2, 'Reviewed'
     ACCEPTED = 3, 'Accepted'
 
 
@@ -107,3 +107,6 @@ class JobApplication(models.Model):
 
     class Meta:
         unique_together = ('student', 'announcement',)
+
+    def __str__(self):
+        return self.announcement.job_name + ' ' + self.student.name

@@ -9,20 +9,31 @@ class CompanyAdmin(admin.ModelAdmin):
 
 @admin.register(JobApplication)
 class JobApplicationAdmin(admin.ModelAdmin):
+    list_filter = ['status']
+
     def get_queryset(self, request):
-        qs = super(JobApplicationAdmin, self).get_queryset(request)
+        # import pdb
+        # pdb.set_trace()
+        qs = super().get_queryset(request)
         if request.user.is_superuser:
             return qs
-        print(qs)
-        return qs.filter(student=Student.objects.filter(username=request.user).first())
+        if hasattr(request.user, 'student'):
+            return qs.filter(student=request.user.student)
+        if hasattr(request.user, 'hr'):
+            return qs.filter(announcement__in=request.user.hr.announcements.all())
 
-    def add_view(self, request, object_id, extra_context=None):       
-        self.exclude = ('status', )
-        return super(JobApplicationAdmin, self).change_view(request, object_id, extra_context)
+    def add_view(self, *args, **kwargs):       
+        self.exclude = ('student', 'status', )
+        return super().add_view(*args, **kwargs)
+
+    def save_model(self, request, obj, form, change):
+        if not change:
+            obj.student = request.user.student
+        return super().save_model(request, obj, form, change)
 
     def delete_view(self, request, object_id, extra_context=None):       
         self.exclude = ('status', )
-        return super(JobApplicationAdmin, self).change_view(request, object_id, extra_context)
+        return super().change_view(request, object_id, extra_context)
 
     # list_display = ['attachments']
     # readonly_fields = ('announcement',)
@@ -39,6 +50,12 @@ class JobApplicationAdmin(admin.ModelAdmin):
 @admin.register(Announcement)
 class AnnouncementAdmin(admin.ModelAdmin):
     actions = ['apply_to']
+    exclude = ['hr']
+
+    def save_model(self, request, obj, form, change):
+        if not change:
+            obj.hr = request.user.hr
+        return super().save_model(request, obj, form, change)
 
     def apply_to(self, request, queryset):
         print(request.user)
@@ -51,6 +68,11 @@ class AnnouncementAdmin(admin.ModelAdmin):
         # )
         path = f'/admin/application/jobapplication/add/?announcement={announcement.id_ann}&student={student.id}'
         return redirect(path)
+
+    def has_change_permission(self, request, obj=None):
+        if not obj:
+            return True 
+        return obj.hr == request.user.hr or request.user.is_superuser
 
     apply_to.short_description = 'Apply to announcements'
     apply_to.allowed_permissions = ['is_student']
